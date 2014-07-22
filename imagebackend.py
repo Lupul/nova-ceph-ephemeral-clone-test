@@ -492,7 +492,8 @@ class Backend(object):
 
 def main():
     print(CONF.libvirt.images_type)
-    # rbd_drv = Rbd(instance='8bee4eaf-616c-4f22-bce4-b64dec1d402b', disk_name='disk')
+    
+    # rbd image exists 
     rbd_drv0 = Rbd(instance='8bee4eaf-616c-4f22-bce4-b64dec1d402b', disk_name='disk')
     print( rbd_drv0.driver.get_pool_info() )
     print( rbd_drv0.check_image_exists() )
@@ -502,7 +503,7 @@ def main():
     print( rbd_drv0.check_image_exists() )
     print( rbd_drv0.driver.get_pool_info() )
 
-    
+    # # rbd image doesn't exist
     rbd_drv = Rbd(instance='8bee4eaf-616c-4f22-bce4-b64dec1d40', disk_name='disk')
     print( rbd_drv.driver.get_pool_info() )
     print( rbd_drv.check_image_exists() )
