@@ -1,7 +1,7 @@
 **Branch test-ok**
 
-#python ./imagebackend.py
-________________________________________________ 
+python ./imagebackend.py
+
 ```Shell
 default
 Rbd pool:vm-images
@@ -44,7 +44,9 @@ False
 ```
 
 **Branch test-fault**
+
 python main.py --config-file=/etc/nova/nova.conf --config-file=/etc/nova/nova-compute.conf
+
 ```Shell
 backend ==================
 Rbd pool:vm-images
