@@ -105,8 +105,8 @@ class RBDDriver(object):
         self.rbd = rbd_lib or rbd
         self.rados = rados_lib or rados
         
-        print("RBDDriver pool:%s" % self.pool)
-        print("RBDDriver user:%s" % self.rbd_user)
+        #print("RBDDriver pool:%s" % self.pool)
+        #print("RBDDriver user:%s" % self.rbd_user)
         
         
         if self.rbd is None:

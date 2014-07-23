@@ -18,6 +18,7 @@ import contextlib
 import os
 
 import six
+import time
 
 from oslo.config import cfg
 
@@ -84,7 +85,7 @@ CONF.import_opt('rbd_secret_uuid', 'nova.virt.libvirt.volume', group='libvirt')
 LOG = logging.getLogger(__name__)
 
 
-@six.add_metaclass(abc.ABCMeta)
+# CCC@six.add_metaclass(abc.ABCMeta)
 class Image(object):
 
     def __init__(self, source_type, driver_format, is_block_dev=False):
@@ -172,6 +173,22 @@ class Image(object):
         :filename: Name of the file in the image directory
         :size: Size of created image in bytes (optional)
         """
+        print("*L*: cache rbd name = %s" % self.rbd_name)
+        print("*L*: cache filename = %s" % filename)
+        self.check_image_exists()
+        print("*L*: ---")
+        time.sleep(2)
+
+        self.check_image_exists()
+        print("*L*: ---")
+        time.sleep(2)
+        
+        self.check_image_exists()
+        print("*L*: ---")
+        time.sleep(2)
+        print("*L*: continuing..")
+        time.sleep(200)
+        
         @utils.synchronized(filename, external=True, lock_path=self.lock_path)
         def fetch_func_sync(target, *args, **kwargs):
             fetch_func(target=target, *args, **kwargs)
@@ -324,6 +341,7 @@ class Rbd(Image):
             except IndexError:
                 raise exception.InvalidDevicePath(path=path)
         else:
+            # self.rbd_name = '%s_%s' % (instance['uuid'], disk_name)
             self.rbd_name = '%s_%s' % (instance, disk_name)
         
 
@@ -333,9 +351,10 @@ class Rbd(Image):
                                  ' images_rbd_pool'
                                  ' flag to use rbd images.'))
         # CONF.libvirt.rbd_secret_uuid
-        CONF.libvirt.images_rbd_pool = 'vm-images'
-        CONF.libvirt.rbd_user = 'compute01'
-        CONF.libvirt.images_rbd_ceph_conf='/etc/ceph/ceph.conf'
+        #print(CONF.libvirt.images_rbd_pool)
+        #CONF.libvirt.images_rbd_pool = 'vm-images'
+        #CONF.libvirt.rbd_user = 'compute01'
+        #CONF.libvirt.images_rbd_ceph_conf='/etc/ceph/ceph.conf'
         
         self.pool = CONF.libvirt.images_rbd_pool
         self.rbd_user = CONF.libvirt.rbd_user
@@ -455,11 +474,11 @@ class Rbd(Image):
 class Backend(object):
     def __init__(self, use_cow):
         self.BACKEND = {
-            'raw': Raw,
-            'qcow2': Qcow2,
-            'lvm': Lvm,
-            'rbd': Rbd,
-            'default': Qcow2 if use_cow else Raw
+#            'raw': Raw,
+#            'qcow2': Qcow2,
+#            'lvm': Lvm,
+            'rbd': Rbd
+#            'default': Qcow2 if use_cow else Raw
         }
 
     def backend(self, image_type=None):
@@ -490,33 +509,6 @@ class Backend(object):
         backend = self.backend(image_type)
         return backend(path=disk_path)
 
-def main():
-    print(CONF.libvirt.images_type)
-    
-    # rbd image exists 
-    rbd_drv0 = Rbd(instance='8bee4eaf-616c-4f22-bce4-b64dec1d402b', disk_name='disk')
-    print( rbd_drv0.driver.get_pool_info() )
-    print( rbd_drv0.check_image_exists() )
-    print( rbd_drv0.check_image_exists() )
-    print( rbd_drv0.check_image_exists() )
-    print( rbd_drv0.check_image_exists() )
-    print( rbd_drv0.check_image_exists() )
-    print( rbd_drv0.driver.get_pool_info() )
 
-    # # rbd image doesn't exist
-    rbd_drv = Rbd(instance='8bee4eaf-616c-4f22-bce4-b64dec1d40', disk_name='disk')
-    print( rbd_drv.driver.get_pool_info() )
-    print( rbd_drv.check_image_exists() )
-    print( rbd_drv.check_image_exists() )
-    print( rbd_drv.check_image_exists() )
-    print( rbd_drv.check_image_exists() )
-    print( rbd_drv.check_image_exists() )
-    print( rbd_drv.driver.get_pool_info() )
-    
-    #print( rbd_drv.get_disk_size('lll') )
-        
-        
-if __name__ == "__main__":
-    main()
     
     
