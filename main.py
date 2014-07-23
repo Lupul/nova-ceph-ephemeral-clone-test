@@ -21,10 +21,15 @@ def main():
 
     print("backend ==================")
     backend = image('8bee4eaf-616c-4f22-bce4-b64dec1d402bxx', 'disk', image_type='rbd')
-    print("backend.check_image_exists %s " % backend.check_image_exists())
+    print("backend.check_image_exists %s " % backend.check_image_exists())      # --- never faults  ---
     time.sleep(2)
-    # --- passes OK ---
-   
+    print("backend.check_image_exists %s " % backend.check_image_exists())      # --- segfaults here  ---
+    time.sleep(2)
+    print("backend.check_image_exists %s " % backend.check_image_exists())      # --- segfaults here  ---
+    time.sleep(2)
+    print("backend.check_image_exists %s " % backend.check_image_exists())      # --- segfaults here  ---
+    time.sleep(2)
+
     backend.cache(fetch_func=libvirt_utils.fetch_image,
                           filename='cfcaebe8ba27540d44595ba1c5bd69a6360a2189',
                           size=1024,
@@ -47,7 +52,7 @@ def main():
     print( rbd_drv.check_image_exists() )
     print( rbd_drv.check_image_exists() )
     print( rbd_drv.driver.get_pool_info() )
-            
-        
+
+
 if __name__ == "__main__":
     main()
